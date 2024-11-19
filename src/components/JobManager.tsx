@@ -118,7 +118,16 @@ export default function JobManager() {
         )
       ))}
 
-      <JobList jobs={jobs} setJobs={setJobs} />
+      <JobList 
+        jobs={jobs} 
+        setJobs={setJobs} 
+        onJobUpdate={(updatedJob) => {
+          setJobs(jobs.map(job => job.id === updatedJob.id ? updatedJob : job))
+        }}
+        onJobDelete={(jobId) => {
+          setJobs(jobs.filter(job => job.id !== jobId))
+        }}
+      />
     </div>
   )
 }

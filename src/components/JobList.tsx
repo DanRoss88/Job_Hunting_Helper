@@ -5,18 +5,12 @@ import JobCard from './JobCard'
 
 interface JobListProps {
   jobs: Job[]
-  setJobs: React.Dispatch<React.SetStateAction<Job[]>>
+  onJobUpdate: (job: Job) => void
+  onJobDelete: (id: string) => void
+  setJobs: React.Dispatch<React.SetStateAction<Job[]>>; 
 }
 
-export default function JobList({ jobs, setJobs }: JobListProps) {
-  const handleJobUpdate = (updatedJob: Job) => {
-    setJobs(jobs.map(job => job.id === updatedJob.id ? updatedJob : job))
-  }
-
-  const handleJobDelete = (jobId: string) => {
-    setJobs(jobs.filter(job => job.id !== jobId))
-  }
-
+export default function JobList({ jobs, onJobUpdate, onJobDelete }: JobListProps) {
   if (!Array.isArray(jobs) || jobs.length === 0) {
     return <div>No jobs found. Try adjusting your search criteria.</div>
   }
@@ -27,8 +21,8 @@ export default function JobList({ jobs, setJobs }: JobListProps) {
         <JobCard 
           key={job.id} 
           job={job} 
-          onUpdate={handleJobUpdate}
-          onDelete={handleJobDelete}
+          onUpdate={onJobUpdate}
+          onDelete={onJobDelete}
         />
       ))}
     </div>

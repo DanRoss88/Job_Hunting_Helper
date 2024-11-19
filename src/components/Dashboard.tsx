@@ -32,8 +32,7 @@ export default function Dashboard() {
         const response = await fetch('/api/jobs')
         const data = await response.json()
         setJobs(data)
-        // For demo purposes, let's assume 30% of jobs are applied
-        setAppliedJobs(data.slice(0, Math.floor(data.length * 0.3)))
+        setAppliedJobs(data.filter((job: Job) => job.applied))
       } catch (error) {
         console.error('Error fetching jobs:', error)
         setJobs([])
@@ -76,12 +75,24 @@ export default function Dashboard() {
       const response = await fetch(`/api/jobs?keywords=${keywords}&location=${location}&email=${indeedEmail}`)
       const data = await response.json()
       setJobs(data)
+      setAppliedJobs(data.filter((job: Job) => job.applied))
     } catch (error) {
       console.error('Error searching jobs:', error)
       setJobs([])
+      setAppliedJobs([])
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleJobUpdate = (updatedJob: Job) => {
+    setJobs(jobs.map(job => job.id === updatedJob.id ? updatedJob : job))
+    setAppliedJobs(jobs.filter(job => job.applied))
+  }
+
+  const handleJobDelete = (jobId: string) => {
+    setJobs(jobs.filter(job => job.id !== jobId))
+    setAppliedJobs(appliedJobs.filter(job => job.id !== jobId))
   }
 
   const applicationStatus = [
@@ -224,7 +235,7 @@ export default function Dashboard() {
               )
             ))}
 
-            <JobList jobs={jobs} setJobs={setJobs} />
+            <JobList jobs={jobs} onJobUpdate={handleJobUpdate} onJobDelete={handleJobDelete} setJobs={setJobs} />
           </div>
         </TabsContent>
       </Tabs>
